@@ -1,0 +1,11 @@
+{
+  "name": "eulerize.js",
+  "version": "0.0.0",
+  "description": "For solving fun math problems",
+  "dependencies": {
+    "he": "^0.5.0",
+    "prompt": "^0.2.14",
+    "request": "2.54.0",
+    "underscore": "1.8.3"
+  }
+}
