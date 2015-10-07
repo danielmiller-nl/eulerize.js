@@ -1,4 +1,5 @@
-var arrMath = require('../lib/arrMath.js');
+var _ = require('../lib/arrMath.js');
+var assert = require('assert');
 
 var arrays = [
   [1,2,3,4,5],
@@ -8,24 +9,20 @@ var arrays = [
 
 describe('arrMath', function() {
 
-    describe('sum', function() {
-
+    describe('flatSum', function() {
       it("Should return the sum of any passed in array", function() {
-
-        expect(arrMath.sum(arrays[0])).toEqual(15);
-        expect(arrMath.sum(arrays[1])).toEqual(0);
-        expect(arrMath.sum(arrays[2])).toEqual(-20);
-
+        assert.equal(_.flatSum(arrays[0]), 15);
+        assert.equal(_.flatSum(arrays[1]), 0);
+        assert.equal(_.flatSum(arrays[2]), -20);
       });
 
       it("Should return the sum of multiple arrays", function() {
-        expect(arrMath.sum(arrays[0],arrays[1],arrays[2])).toEqual(-5);
+        assert.equal(_.flatSum(arrays[0],arrays[1],arrays[2]), -5);
       });
 
       it("Should return the sum of nested arrays", function() {
-        expect(arrMath.sum([arrays,[[1,[2]],2]])).toEqual(0);
+        assert.equal(_.flatSum([arrays,[[1,[2]],2]]), 0);
       });
-
     });
 
 });
