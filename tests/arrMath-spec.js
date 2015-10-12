@@ -39,6 +39,114 @@ describe('arrMath', function () {
 			assert.equal(_.toInt([1, 100, 1, 0, 99]), 11001099);
 		});
 	});
+
+	describe('toFunc', function () {
+		it("Should return a function", function () {
+			assert.equal(typeof _.toFunc('return a;', 'a'), 'function');
+		});
+
+		it("Should have the intended behaviour", function () {
+			assert.equal(_.toFunc('return 2*a+2*b;', 'a', 'b')(3,4), 14);
+		});
+
+		it("Should work with single argument functions", function () {
+			assert.equal(_.toFunc('return str.length;', 'str')('hello world'), 11);
+		});
+
+		it("Should work with multi argument functions", function () {
+			assert.equal(
+				_.toFunc('return str.length + arr.length + a*b;', 'str', 'arr', 'a', 'b')('hello', [1,1,1], 2, 2.5),
+				13
+			);
+		});
+	});
+
+	describe('returnIf', function () {
+		it("Should return the val applied to the first returnVal corresponding to a true predicate", function () {
+			var val = 12;
+			var predicates = ['return val % 7 === 0;', 'return val % 5 === 0;', 'return val % 6 === 0;', 'return val % 2 === 0;'];
+			var returnValues = [
+				function (val) {return '7 divides ' + val + '!'},
+				function (val) {return '5 divides ' + val + '!'},
+				function (val) {return '6 divides ' + val + '!'},
+				function (val) {return '2 divides ' + val + '!'}
+			];
+			assert.equal(_.returnIf(val, predicates, returnValues), '6 divides 12!');
+		});
+
+		it("Should work if return values are objects", function () {
+			var vals = ['apple', 'orange'];
+			var predicates = ['return val.length == 4;', 'return val.length == 5;', 'return val.length == 6;'];
+			var returnValues = [
+				{apple: '"apple" has 4 letters', orange:'"orange" has 4 letters'},
+				{apple: '"apple" has 5 letters', orange:'"orange" has 5 letters'},
+				{apple: '"apple" has 6 letters', orange:'"orange" has 6 letters'},
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), '"apple" has 5 letters');
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), '"orange" has 6 letters');
+		});
+
+		it("Should work if return values are arrays", function () {
+			var vals = [1, 2];
+			var predicates = ['return val == 2;', 'return val == 3;', 'return val == 1;'];
+			var returnValues = [
+				['x', 'x', 'two'],
+				['x', 'x', 'x'],
+				['x', 'one', 'x'],
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), 'one');
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), 'two');
+		});
+
+		it("Should work if return values are null", function () {
+			var vals = [1, 2];
+			var predicates = ['return val == 2;', 'return val == 3;', 'return val == 1;'];
+			var returnValues = [
+				null,
+				['x', 'x', 'x'],
+				['x', 'one', 'x'],
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), 'one');
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), null);
+		});
+
+		it("Should work if return values are boolean", function () {
+			var vals = [1, 2];
+			var predicates = ['return val == 2;', 'return val == 3;', 'return val == 1;'];
+			var returnValues = [
+				true,
+				['x', 'x', 'x'],
+				false,
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), false);
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), true);
+		});
+
+		it("Should work if return values are strings or nums", function () {
+			var vals = [1, 2];
+			var predicates = ['return val == 2;', 'return val == 3;', 'return val == 1;'];
+			var returnValues = [
+				200,
+				['x', 'x', 'x'],
+				'100',
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), '100');
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), 200);
+		});
+
+		it("Should work if return values are undefined", function () {
+			var vals = [1, 2];
+			var predicates = ['return val == 2;', 'return val == 3;', 'return val == 1;'];
+			var returnValues = [
+				200,
+				['x', 'x', 'x'],
+				undefined
+			];
+			assert.equal(_.returnIf(vals[0], predicates, returnValues), 1);
+			assert.equal(_.returnIf(vals[1], predicates, returnValues), 200);
+		});
+		// Needs more complete testing
+	});
 	
 	describe('lengthsSoFar', function () {
 		it("Should return a mapping...", function () {
